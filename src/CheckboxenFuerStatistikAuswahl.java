@@ -23,11 +23,11 @@ public class CheckboxenFuerStatistikAuswahl {
 	}
 
 	public void BoxErstellen() {
-		if (!Main.getAu().name.isEmpty()) {
+		if (!Main.getAu().getName().isEmpty()) {
 			box.getChildren().clear();
 			arrBox.clear();
-			for (int i = 0; i < Main.getAu().name.size(); i++) {
-				arrBox.add(new CheckBox(Main.getAu().name.get(i)));
+			for (int i = 0; i < Main.getAu().getName().size(); i++) {
+				arrBox.add(new CheckBox(Main.getAu().getName().get(i)));
 				box.add(arrBox.get(i), 0, i);
 			}
 			alle();
@@ -36,7 +36,7 @@ public class CheckboxenFuerStatistikAuswahl {
 
 	private void alle() {
 		Button al = new Button("Auswahl alle");
-		box.add(al, 0, Main.getAu().name.size() + 1);
+		box.add(al, 0, Main.getAu().getName().size() + 1);
 		al.setOnAction(event -> {
 			if (an) {
 				for (CheckBox anArrBox : arrBox) {

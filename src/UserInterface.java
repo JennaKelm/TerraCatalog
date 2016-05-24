@@ -10,52 +10,66 @@ import java.util.ArrayList;
 public class UserInterface extends javafx.scene.layout.BorderPane {
 
 	private static UserInterface instance;
-	private final TextField filename = new TextField(); /* TODO */
-	private final Button outputFileButton;
-	private final TextField outputFileTextField;
-	private final Button statistikButton;
-	private final TextField statistikTextFilde;
-	private final Button okAuslesen;
-	private final Button okSchreiben;
-	private final GridPane gi;
-	private final Button openXmlFolderButton;
-	private final Label xmlDateiPfard;
-	private final Label outputFileLabel;
-	private final Label statistikLabel;
-	private final Button zurueck;
+	private TextField filename = new TextField();
+	private final Button outputFileButton = new Button("Datei Auswahl...");
+	private final TextField outputFileTextField = new TextField();
+	private final Button statistikButton = new Button("Datei Auswahl Statistik...");
+	private final TextField statistikTextFilde = new TextField();
+	private final Button okAuslesen = new Button("Auslesen");
+	private final Button okSchreiben = new Button("Ausgabe generieren");
+	private final GridPane gi = new GridPane();
+	private Button openXmlFolderButton = new Button("XML Ordner Auswähl...");
+	private final Label xmlDateiPfard = new Label("XML Ordner ");
+	private final Label outputFileLabel = new Label("Ausgabe Datei");
+	private final Label statistikLabel = new Label("Statistik Datei");
+	private final Button zurueck = new Button("Zurücksetzen");
 	private final GridPane start = new GridPane();
 	private final GridPane filewahl = new GridPane();
-	private final Button stat;
-	private final TitledPane tipa;
-	private final Image img;
-	private final ImageView iv;
-	private ArrayList<CheckBox> isCheck;
-	private ScrollPane sp;
+	private final Button stat = new Button("Schreiben");
+	private final TitledPane tipa = new TitledPane("Statistic", Main.getBo().getBox());
+	private final Image img = new Image(getClass().getResourceAsStream("logo_bottrop.jpg"));
+	private final ImageView iv = new ImageView(img);
+	private ArrayList<CheckBox> isCheck = new ArrayList<>();
+	private ScrollPane sp = new ScrollPane();
 
+	public ArrayList<CheckBox> getIsCheck() {
+		return isCheck;
+	}
+	public Button getOkAuslesen() {
+		return okAuslesen;
+	}
+
+	public TextField getFilename() {
+		return filename;
+	}
+
+	public Button getOkSchreiben() {
+		return okSchreiben;
+	}
+
+	public Button getOutputFileButton() {
+		return outputFileButton;
+	}
+
+	public TextField getOutputFileTextField() {
+		return outputFileTextField;
+	}
+
+	public TextField getStatistikTextFilde() {
+		return statistikTextFilde;
+	}
+
+	public Button getStatistikButton() {
+		return statistikButton;
+	}
 
 	// erstellen der Grafischen Elemente und zuweisen der Button Elemente zuden passenden Methoden in Control
 	public UserInterface() {
 		instance = this;
 
-		gi = new GridPane();
-		openXmlFolderButton = new Button("XML Ordner Auswähl...");
-		xmlDateiPfard = new Label("XML Ordner ");
-		outputFileButton = new Button("Datei Auswahl...");
-		outputFileTextField = new TextField();
 		outputFileTextField.setEditable(false);
-		outputFileLabel = new Label("Ausgabe Datei");
-		statistikButton = new Button("Datei Auswahl Statistik...");
-		statistikTextFilde = new TextField();
-		statistikLabel = new Label("Statistik Datei");
-		okAuslesen = new Button("Auslesen");
-		zurueck = new Button("Zurücksetzen");
-		okSchreiben = new Button("Ausgabe generieren");
-		stat = new Button("Schreiben");
-		tipa = new TitledPane("Statistic", Main.getBo().getBox());
-		img = new Image(getClass().getResourceAsStream("logo_bottrop.jpg"));
-		iv = new ImageView(img);
 		iv.setId("iv");
-		sp = new ScrollPane();
+
 
 		filename.setEditable(false);
 		statistikTextFilde.setEditable(false);
@@ -68,13 +82,12 @@ public class UserInterface extends javafx.scene.layout.BorderPane {
 		filewahl.setHgap(10);
 		filewahl.setVgap(10);
 
-		EventHandling c = EventHandling.getInstanceOf();
-		c.FolderAuswahl(openXmlFolderButton, filename);
-		c.FileAuswahl(outputFileButton, outputFileTextField);
-		c.FileAuswahl(statistikButton, statistikTextFilde);
-		c.Output(okSchreiben, outputFileTextField, statistikTextFilde);
-		c.XmlDateieneinlesen(okAuslesen, filename);
-		c.Back(zurueck);
+		EventHandling.FolderAuswahl(openXmlFolderButton, filename);
+		EventHandling.FileAuswahl(outputFileButton, outputFileTextField);
+		EventHandling.FileAuswahl(statistikButton, statistikTextFilde);
+		EventHandling.Output(okSchreiben, outputFileTextField, statistikTextFilde);
+		EventHandling.XmlDateieneinlesen(okAuslesen, filename);
+		EventHandling.Back(zurueck);
 
 		start.add(xmlDateiPfard, 0, 0);
 		start.add(filename, 0, 1);
@@ -98,11 +111,10 @@ public class UserInterface extends javafx.scene.layout.BorderPane {
 
 		setCenter(gi);
 		setLeft(iv);
-		setOnKeyPressed(event
-				->
+		setOnKeyPressed(event ->
 			{
 				if (event.getCode() == KeyCode.ENTER) {
-					if (EventHandling.getInstanceOf().istan) {
+					if (EventHandling.istan()) {
 						okAuslesen.fire();
 					} else {
 						okSchreiben.fire();

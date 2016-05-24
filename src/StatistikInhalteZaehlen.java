@@ -3,7 +3,17 @@ import java.util.HashMap;
 
 public class StatistikInhalteZaehlen {
 	private static StatistikInhalteZaehlen instenceOF;
+
+	public ArrayList<String> getName() {
+		return name;
+	}
+
 	private final ArrayList<String> name = new ArrayList<>();
+
+	public ArrayList<HashMap<String, Integer>> getAuZa() {
+		return auZa;
+	}
+
 	private final ArrayList<HashMap<String, Integer>> auZa = new ArrayList<>();
 
 	public StatistikInhalteZaehlen() {

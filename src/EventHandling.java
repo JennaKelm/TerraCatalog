@@ -20,56 +20,53 @@ import java.util.Map.Entry;
 
 
 public class EventHandling {
-	private static EventHandling instanceOf;
-	private final FileChooser fileChooser = new FileChooser();
-	private final DirectoryChooser Chooser = new DirectoryChooser();
-	private final ArrayList<AuslesenXMLInformationen> mylist = new ArrayList<>();
-	private final ArrayList<String> fehlerhafteXMLPfade = new ArrayList<>();
-	private String out;
-	private String statistik;
-	private String folder;
-	private int xmlDateienZaehlen;
-	private int outZaehlen;
-	private boolean istan = true;
-	private Fortschritsanzeige myProgress;
-	private OpenOutputDatei opOuDa;
-	private boolean o = false;
-	private boolean s = false;
-	private File fileHilf;
-	private File fileHilf1;
-	private int falscheXml;
-	private boolean hilfXml;
-
+	private static final FileChooser fileChooser = new FileChooser();
+	private static final DirectoryChooser Chooser = new DirectoryChooser();
+	private static final ArrayList<AuslesenXMLInformationen> mylist = new ArrayList<>();
+	private static final ArrayList<String> fehlerhafteXMLPfade = new ArrayList<>();
+	private static String out;
+	private static String statistik;
+	private static String folder;
+	private static int xmlDateienZaehlen;
+	private static int outZaehlen;
+	private static boolean istan = true;
+	private static Fortschritsanzeige myProgress;
+	private static OpenOutputDatei opOuDa;
+	private static boolean o = false;
+	private static boolean s = false;
+	private static File fileHilf;
+	private static File fileHilf1;
+	private static int falscheXml;
+	private static boolean hilfXml;
 	public EventHandling() {
-		instanceOf = this;
 		FileSystemView view = FileSystemView.getFileSystemView();
 		fileHilf = view.getDefaultDirectory();
 		fileHilf1 = view.getDefaultDirectory();
 	}
 
-	public static EventHandling getInstanceOf() {
-		return instanceOf;
+	public static boolean istan() {
+		return istan;
 	}
 // auswahl der ordner in denen sich die xml dateien befinden
 
 	// setzt alles auf Programm start wenn der zurück Button gedrück wird
-	public void Back(Button back) {
+	public static void Back(Button back) {
 		back.setOnAction(
 			e -> {
 				mylist.clear();
 				fehlerhafteXMLPfade.clear();
-				StatistikInhalteZaehlen.getInstenceOF().auZa.clear();
-				StatistikInhalteZaehlen.getInstenceOF().name.clear();
-				UserInterface.getInstance().filename.clear();
+				StatistikInhalteZaehlen.getInstenceOF().getAuZa().clear();
+				StatistikInhalteZaehlen.getInstenceOF().getName().clear();
+				UserInterface.getInstance().getFilename().clear();
 				xmlDateienZaehlen = 0;
 				falscheXml = 0;
 				istan = !istan;
 				UserInterface.getInstance().Sichtbar(istan);
-				UserInterface.getInstance().okAuslesen.setDisable(true);
+				UserInterface.getInstance().getOkAuslesen().setDisable(true);
 			});
 	}
 
-	public void FolderAuswahl(Button xmlFolder, TextField filename) {
+	public static void FolderAuswahl(Button xmlFolder, TextField filename) {
 		xmlFolder.setOnAction(
 			e -> {
 				Chooser.setInitialDirectory(fileHilf1);
@@ -77,13 +74,13 @@ public class EventHandling {
 				if (file != null) {
 					fileHilf1 = file.getParentFile();
 					filename.setText(file.toString());
-					UserInterface.getInstance().okAuslesen.setDisable(false);
+					UserInterface.getInstance().getOkAuslesen().setDisable(false);
 				}
 			});
 	}
 
 	//    Auswahl der CSV Datei pfade überprüfung ob die neu generirt werden müssen oder überschrieben
-	public void FileAuswahl(Button btn, TextField filename) {
+	public static void FileAuswahl(Button btn, TextField filename) {
 		btn.setOnAction(
 			e -> {
 				fileChooser.setInitialDirectory(fileHilf);
@@ -92,24 +89,24 @@ public class EventHandling {
 				if (file != null && file.getName().toLowerCase().endsWith(".csv")) {
 					filename.setText(file.toString());
 					fileHilf = file.getParentFile();
-					if (btn.equals(UserInterface.getInstance().outputFileButton)) {
+					if (btn.equals(UserInterface.getInstance().getOutputFileButton())) {
 						o = true;
-					} else if (btn.equals(UserInterface.getInstance().statistikButton)) {
+					} else if (btn.equals(UserInterface.getInstance().getStatistikButton())) {
 						s = true;
 					}
 				}
 				if (o || s) {
-					UserInterface.getInstance().okSchreiben.setDisable(false);
+					UserInterface.getInstance().getOkSchreiben().setDisable(false);
 				}
 			});
 	}
 
 	//    einlesen aller xml dateien die sich im ordner befinden
-	public void XmlDateieneinlesen(Button btn, TextField text1) {
+	public static void XmlDateieneinlesen(Button btn, TextField text1) {
 		btn.setOnAction(
 			e -> new Thread(() -> {
 				try {
-					Platform.runLater(this::AlProgress);
+					Platform.runLater(EventHandling::AlProgress);
 					try {
 						Thread.sleep(3000);
 					} catch (InterruptedException e1) {
@@ -129,36 +126,41 @@ public class EventHandling {
 								CheckXML(filename);
 								if (hilfXml) {
 									AuslesenXMLInformationen entry = new AuslesenXMLInformationen(filename);
-									if (entry.nicht) {
+									//if (entry.isNicht()) {
 										mylist.add(entry);
 										xmlDateienZaehlen++;
 										Platform.runLater(() -> myProgress.progressSetzen(xmlDateienZaehlen, directoryListing.length));
-									}
+
+								//	}
 								}
+
 							}
+							myProgress.close();
 							System.out.println(falscheXml);
 							if (falscheXml != 0) {
 								Platform.runLater(() -> {
 									Alert ale = new Alert(Alert.AlertType.CONFIRMATION);
 									ale.setContentText("Es sind " + falscheXml + "Falsche XML-Dateien aufgetaucht trotzdem weiter");
 									ale.showAndWait();
-									if (ale.getResult() == ButtonType.CANCEL) {
-									} else if (ale.getResult() == ButtonType.OK) {
-
-										UserInterface.getInstance().isCheck = new ArrayList<>();
+									if (ale.getResult() == ButtonType.OK) {
+										UserInterface.getInstance().getIsCheck();
 										istan = !istan;
 										Platform.runLater(() -> {
 											Main.getBo().BoxErstellen();
 											UserInterface.getInstance().Sichtbar(istan);
+											myProgress.close();
 										});
 									}
+									myProgress.close();
 								});
 							} else {
-								UserInterface.getInstance().isCheck = new ArrayList<>();
+								UserInterface.getInstance().getIsCheck();
 								istan = !istan;
 								Platform.runLater(() -> {
 									Main.getBo().BoxErstellen();
 									UserInterface.getInstance().Sichtbar(istan);
+
+									myProgress.close();
 								});
 							}
 						} else {
@@ -166,7 +168,7 @@ public class EventHandling {
 								myProgress.close();
 								Warnung("Es wurden keine XML_Dateien gefunden");
 							});
-							UserInterface.getInstance().okAuslesen.setDisable(true);
+							UserInterface.getInstance().getOkAuslesen().setDisable(true);
 						}
 					} else {
 						Platform.runLater(() -> {
@@ -182,22 +184,22 @@ public class EventHandling {
 	}
 
 	//    generirt den output der statistik nach den in ischeck ausgewählten checkboxen elementen
-	public void Output(Button btn, TextField out, TextField statistik) {
+	public static void Output(Button btn, TextField out, TextField statistik) {
 		btn.setOnAction(
 			e -> {
 				System.out.println(o + " " + s);
 				new Thread(() -> {
 					try {
-						Platform.runLater(this::AlProgress);
+						Platform.runLater(EventHandling::AlProgress);
 						try {
 							Thread.sleep(3000);
 						} catch (InterruptedException e1) {
 							e1.printStackTrace();
 						}
-						UserInterface.getInstance().isCheck = new ArrayList<>();
+						UserInterface.getInstance().getIsCheck();
 						for (int i = 0; i < Main.getBo().getArrBox().size(); i++) {
 							if (Main.getBo().getArrBox().get(i).isSelected()) {
-								UserInterface.getInstance().isCheck.add(Main.getBo().getArrBox().get(i));
+								UserInterface.getInstance().getIsCheck().add(Main.getBo().getArrBox().get(i));
 							}
 						}
 						System.out.println("jetzt");
@@ -205,7 +207,7 @@ public class EventHandling {
 							if (o) {
 								FunkOutput(out);
 							} else {
-								Warnung("Die Datei von Output ist keine csv datei");
+								Platform.runLater(() -> Warnung("Die Datei von Output ist keine csv datei"));
 							}
 						}
 						if (s) {
@@ -216,9 +218,9 @@ public class EventHandling {
 						Platform.runLater(() -> {
 							myProgress.close();
 							opOuDa = new OpenOutputDatei(out.getText(), statistik.getText());
-							UserInterface.getInstance().outputFileTextField.clear();
-							UserInterface.getInstance().statistikTextFilde.clear();
-							UserInterface.getInstance().okSchreiben.setDisable(true);
+							UserInterface.getInstance().getOutputFileTextField().clear();
+							UserInterface.getInstance().getStatistikTextFilde().clear();
+							UserInterface.getInstance().getOkSchreiben().setDisable(true);
 						});
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -230,24 +232,24 @@ public class EventHandling {
 	}
 
 	//    Schreiben des CSV output in den angegeben Datei-Pfard
-	private void FunkOutput(TextField filename) {
+	private static void FunkOutput(TextField filename) {
 		if (filename != null) {
 			out = filename.getText();
 			try {
 				FileWriter writer;
 				writer = new FileWriter(out);
-				String[] hilf = new String[mylist.get(0).dictionary.keySet().toArray().length];
-				mylist.get(0).dictionary.keySet().toArray(hilf);
+				String[] hilf = new String[mylist.get(0).getDictionary().keySet().toArray().length];
+				mylist.get(0).getDictionary().keySet().toArray(hilf);
 				for (String aHilf : hilf) {
 					writer.append(aHilf).append(";");
 				}
 				writer.append("\n");
 				for (AuslesenXMLInformationen aMylist : mylist) {
-					for (String name : aMylist.dictionary.keySet()) {
-						writer.append(aMylist.dictionary.get(name)).append(";");
+					for (String name : aMylist.getDictionary().keySet()) {
+						writer.append(aMylist.getDictionary().get(name)).append(";");
 					}
 					outZaehlen++;
-					Platform.runLater(() -> myProgress.progressSetzen(outZaehlen, (xmlDateienZaehlen + UserInterface.getInstance().isCheck.size())));
+					Platform.runLater(() -> myProgress.progressSetzen(outZaehlen, (xmlDateienZaehlen + UserInterface.getInstance().getIsCheck().size())));
 					writer.append("\n");
 				}
 				System.out.println(mylist.size() + " " + outZaehlen);
@@ -262,7 +264,7 @@ public class EventHandling {
 	}
 
 	//    Schreiben der Statistik in den angegebenen Datie-Pfard
-	private void FunkStatistik(TextField filename) {
+	private static void FunkStatistik(TextField filename) {
 		if (filename != null) {
 			statistik = filename.getText();
 			try {
@@ -276,12 +278,12 @@ public class EventHandling {
 					}
 					writer.append("\n");
 				}
-				if (!UserInterface.getInstance().isCheck.isEmpty()) {
+				if (!UserInterface.getInstance().getIsCheck().isEmpty()) {
 
-					for (int i = 0; i < UserInterface.getInstance().isCheck.size(); i++) {
-						if (StatistikInhalteZaehlen.getInstenceOF().name.contains(UserInterface.getInstance().isCheck.get(i).getText())) {
-							MapSchreiben(StatistikInhalteZaehlen.getInstenceOF().auZa.get(StatistikInhalteZaehlen.getInstenceOF().name.indexOf(UserInterface.getInstance().isCheck.get(i).getText())), writer, UserInterface.getInstance().isCheck.get(i).getText());
-							Platform.runLater(() -> myProgress.progressSetzen(outZaehlen, (xmlDateienZaehlen + UserInterface.getInstance().isCheck.size())));
+					for (int i = 0; i < UserInterface.getInstance().getIsCheck().size(); i++) {
+						if (StatistikInhalteZaehlen.getInstenceOF().getName().contains(UserInterface.getInstance().getIsCheck().get(i).getText())) {
+							MapSchreiben(StatistikInhalteZaehlen.getInstenceOF().getAuZa().get(StatistikInhalteZaehlen.getInstenceOF().getName().indexOf(UserInterface.getInstance().getIsCheck().get(i).getText())), writer, UserInterface.getInstance().getIsCheck().get(i).getText());
+							Platform.runLater(() -> myProgress.progressSetzen(outZaehlen, (xmlDateienZaehlen + UserInterface.getInstance().getIsCheck().size())));
 							outZaehlen++;
 						}
 					}
@@ -293,7 +295,7 @@ public class EventHandling {
 		}
 	}
 
-	private void MapSchreiben(HashMap<String, Integer> map, FileWriter write, String titel) {
+	private static void MapSchreiben(HashMap<String, Integer> map, FileWriter write, String titel) {
 		try {
 			write.append("\n").append(titel).append("\n");
 			for (Entry<String, Integer> pair : map.entrySet()) {
@@ -305,21 +307,23 @@ public class EventHandling {
 		}
 	}
 
-	private void Warnung(String titel) {
+	private static void Warnung(String titel) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Information Dialog");
 		alert.setContentText(titel);
 		alert.showAndWait();
 	}
 
-	private void AlProgress() {
+	private static void AlProgress() {
 		myProgress = new Fortschritsanzeige();
+
 	}
 
-	//    checkt ob die angegebende datei ein xml ist und gibs sie ensprechend zru bearbeitung frei oder auch nicht
-	private void CheckXML(String filname) {
+	//    checkt ob die angegebende datei ein xml ist und gibs sie ensprechend zur bearbeitung frei oder auch nicht
+	private static void CheckXML(String filname) {
 		Document docu = Op(filname);
 		try {
+			assert docu != null;
 			NodeList Nvalue = docu.getElementsByTagName("gmd:fileIdentifier");
 			if (Nvalue.getLength() >= 1) {
 				hilfXml = true;
@@ -335,7 +339,7 @@ public class EventHandling {
 	}
 
 	//    einleden der xml dateien aus dem angegebenden ordner
-	private Document Op(String filename) {
+	private static Document Op(String filename) {
 		try {
 			InputStream inputStream = new FileInputStream(filename);
 			Reader reader = new InputStreamReader(inputStream, "UTF-8");

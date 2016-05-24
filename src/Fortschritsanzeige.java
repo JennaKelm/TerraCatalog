@@ -6,8 +6,10 @@ class Fortschritsanzeige extends Alert {
 	private static ProgressIndicator pro;
 
 	public Fortschritsanzeige() {
-		super(AlertType.INFORMATION);
+		super(AlertType.NONE);
 		init();
+
+
 	}
 
 	private void init() {
@@ -20,5 +22,7 @@ class Fortschritsanzeige extends Alert {
 
 	public void progressSetzen(double update, int in) {
 		pro.setProgress(update / in);
+
 	}
+
 }

@@ -14,22 +14,28 @@ class AuslesenXMLInformationen {
 
 	private final LinkedHashMap<String, String> dictionary = new LinkedHashMap<>();
 	private final ArrayList<String> hilf = new ArrayList<>();
-	private final boolean nicht = true;
+	//private boolean nicht = true;
 	private final String[] arr1 = {"Name", "Amt", "position", "Tele-", "Faxnummer", "STRASSE-", "STADT-", "PLZ-", "LAND-", "E-MAIL-", "Role-"};
-	private final String[] arr2 = {"gmd:individualName", "gmd:organisationName", "gmd:positionName", "gmd:voice", "gmd:facsimile", "gmd:deliveryPoint", "gmd:city", "gmd:postalCode", "gmd:country", "gmd:electronicMailAddress", "gmd:role"};
 	private final LinkedHashMap<String, String> mapVorlage = new LinkedHashMap<>();
 	private final LinkedHashMap<String, String> map = new LinkedHashMap<>();
 	private Document XmlDocument = null;
-	private String filename = null;
-	private File fi;
+
+	public LinkedHashMap<String, String> getDictionary() {
+		return dictionary;
+	}
+
+	//public boolean isNicht() {
+	//	return nicht;
+	//}
 
 	public AuslesenXMLInformationen(String filename) {
 
 		for (int i = 0; i < arr1.length; i++) {
+			String[] arr2 = {"gmd:individualName", "gmd:organisationName", "gmd:positionName", "gmd:voice", "gmd:facsimile", "gmd:deliveryPoint", "gmd:city", "gmd:postalCode", "gmd:country", "gmd:electronicMailAddress", "gmd:role"};
 			mapVorlage.put(arr2[i], arr1[i]);
 		}
 		XmlDocument = OpenXml(filename);
-		this.filename = filename;
+		String filename1 = filename;
 		dictionary.put("Dateiname", filename);
 		Test("gmd:title", "Titel");
 		AdressDaten("gmd:contact", "gmd:CI_ResponsibleParty", "Metadatenkontakt");
@@ -74,7 +80,7 @@ class AuslesenXMLInformationen {
 	private void getSicherheitsstatus(String filename) {
 		dictionary.put("Status", "null");
 		filename = filename.toLowerCase();
-		fi = new File(filename.replace(".xml", ".tcext"));
+		File fi = new File(filename.replace(".xml", ".tcext"));
 		if (fi.exists()) {
 			ArrayList<String> hilf = new ArrayList<>();
 			try (BufferedReader br = new BufferedReader(new FileReader(
