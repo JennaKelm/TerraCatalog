@@ -12,9 +12,9 @@ public class UserInterface extends javafx.scene.layout.BorderPane {
 	private static UserInterface instance;
 	private TextField filename = new TextField();
 	private final Button outputFileButton = new Button("Datei Auswahl...");
-	private final TextField outputFileTextField = new TextField();
+	private TextField outputFileTextField = new TextField();
 	private final Button statistikButton = new Button("Datei Auswahl Statistik...");
-	private final TextField statistikTextFilde = new TextField();
+	private TextField statistikTextFilde = new TextField();
 	private final Button okAuslesen = new Button("Auslesen");
 	private final Button okSchreiben = new Button("Ausgabe generieren");
 	private final GridPane gi = new GridPane();
@@ -38,27 +38,21 @@ public class UserInterface extends javafx.scene.layout.BorderPane {
 	public Button getOkAuslesen() {
 		return okAuslesen;
 	}
-
 	public TextField getFilename() {
 		return filename;
 	}
-
 	public Button getOkSchreiben() {
 		return okSchreiben;
 	}
-
 	public Button getOutputFileButton() {
 		return outputFileButton;
 	}
-
 	public TextField getOutputFileTextField() {
 		return outputFileTextField;
 	}
-
 	public TextField getStatistikTextFilde() {
 		return statistikTextFilde;
 	}
-
 	public Button getStatistikButton() {
 		return statistikButton;
 	}
@@ -69,7 +63,6 @@ public class UserInterface extends javafx.scene.layout.BorderPane {
 
 		outputFileTextField.setEditable(false);
 		iv.setId("iv");
-
 
 		filename.setEditable(false);
 		statistikTextFilde.setEditable(false);
@@ -111,6 +104,7 @@ public class UserInterface extends javafx.scene.layout.BorderPane {
 
 		setCenter(gi);
 		setLeft(iv);
+
 		setOnKeyPressed(event ->
 			{
 				if (event.getCode() == KeyCode.ENTER) {

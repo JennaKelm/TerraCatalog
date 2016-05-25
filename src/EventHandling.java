@@ -112,7 +112,7 @@ public class EventHandling {
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
-					if (!text1.getText().isEmpty()) {
+//					if (!text1.getText().isEmpty()) {
 						folder = text1.getText();
 						xmlDateienZaehlen = 0;
 						File dir = new File(folder);
@@ -126,12 +126,12 @@ public class EventHandling {
 								CheckXML(filename);
 								if (hilfXml) {
 									AuslesenXMLInformationen entry = new AuslesenXMLInformationen(filename);
-									//if (entry.isNicht()) {
+//									if (entry.isNicht()) {
 										mylist.add(entry);
 										xmlDateienZaehlen++;
 										Platform.runLater(() -> myProgress.progressSetzen(xmlDateienZaehlen, directoryListing.length));
 
-								//	}
+//									}
 								}
 
 							}
@@ -170,12 +170,12 @@ public class EventHandling {
 							});
 							UserInterface.getInstance().getOkAuslesen().setDisable(true);
 						}
-					} else {
-						Platform.runLater(() -> {
-							myProgress.close();
-							Warnung("Eingabe Feld is Leer ");
-						});
-					}
+//					} else {
+//						Platform.runLater(() -> {
+//					)		myProgress.close();
+//							Warnung("Eingabe Feld is Leer ");
+//						});
+//					}
 					Platform.runLater(myProgress::close);
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -206,15 +206,17 @@ public class EventHandling {
 						if ((out.getText() != null) || (statistik.getText() != null)) {
 							if (o) {
 								FunkOutput(out);
-							} else {
-								Platform.runLater(() -> Warnung("Die Datei von Output ist keine csv datei"));
 							}
+//							else {
+//								Platform.runLater(() -> Warnung("Die Datei von Output ist keine csv datei"));
+//							}
 						}
 						if (s) {
 							FunkStatistik(statistik);
-						} else {
-							Warnung("keien Datei mit csv endung gefunden ");
 						}
+//						else {
+//							Warnung("keien Datei mit csv endung gefunden ");
+//						}
 						Platform.runLater(() -> {
 							myProgress.close();
 							opOuDa = new OpenOutputDatei(out.getText(), statistik.getText());
@@ -338,7 +340,7 @@ public class EventHandling {
 		}
 	}
 
-	//    einleden der xml dateien aus dem angegebenden ordner
+	//    einlesen der xml dateien aus dem angegebenden ordner
 	private static Document Op(String filename) {
 		try {
 			InputStream inputStream = new FileInputStream(filename);

@@ -26,11 +26,11 @@ public class CheckboxenFuerStatistikAuswahl {
 		if (!Main.getAu().getName().isEmpty()) {
 			box.getChildren().clear();
 			arrBox.clear();
+			alle();
 			for (int i = 0; i < Main.getAu().getName().size(); i++) {
 				arrBox.add(new CheckBox(Main.getAu().getName().get(i)));
 				box.add(arrBox.get(i), 0, i);
 			}
-			alle();
 		}
 	}
 
