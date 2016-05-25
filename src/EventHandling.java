@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
 import javax.swing.filechooser.FileSystemView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +37,7 @@ public class EventHandling {
 	private static File fileHilf1;
 	private static int falscheXml;
 	private static boolean hilfXml;
+
 	public EventHandling() {
 		FileSystemView view = FileSystemView.getFileSystemView();
 		fileHilf = view.getDefaultDirectory();
@@ -130,12 +130,9 @@ public class EventHandling {
 										mylist.add(entry);
 										xmlDateienZaehlen++;
 										Platform.runLater(() -> myProgress.progressSetzen(xmlDateienZaehlen, directoryListing.length));
-
 //									}
 								}
-
 							}
-							myProgress.close();
 							System.out.println(falscheXml);
 							if (falscheXml != 0) {
 								Platform.runLater(() -> {
