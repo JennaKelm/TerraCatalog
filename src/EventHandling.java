@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+
 import javax.swing.filechooser.FileSystemView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,7 +30,7 @@ public class EventHandling {
 	private static int xmlDateienZaehlen;
 	private static int outZaehlen;
 	private static boolean istan = true;
-	private static Fortschritsanzeige myProgress;
+	private static ProgessDialog myProgress;
 	private static OpenOutputDatei opOuDa;
 	private static boolean o = false;
 	private static boolean s = false;
@@ -37,7 +38,6 @@ public class EventHandling {
 	private static File fileHilf1;
 	private static int falscheXml;
 	private static boolean hilfXml;
-
 	public EventHandling() {
 		FileSystemView view = FileSystemView.getFileSystemView();
 		fileHilf = view.getDefaultDirectory();
@@ -129,15 +129,18 @@ public class EventHandling {
 //									if (entry.isNicht()) {
 										mylist.add(entry);
 										xmlDateienZaehlen++;
-										Platform.runLater(() -> myProgress.progressSetzen(xmlDateienZaehlen, directoryListing.length));
+									double progress = (double) xmlDateienZaehlen / directoryListing.length;
+									Platform.runLater(() -> myProgress.setProgress(progress));
 //									}
 								}
+
 							}
+							Platform.runLater(myProgress::closeMe);
 							System.out.println(falscheXml);
 							if (falscheXml != 0) {
 								Platform.runLater(() -> {
 									Alert ale = new Alert(Alert.AlertType.CONFIRMATION);
-									ale.setContentText("Es sind " + falscheXml + "Falsche XML-Dateien aufgetaucht trotzdem weiter");
+									ale.setContentText("Es sind " + falscheXml + " falsche XML-Dateien aufgetaucht.\nTrotzdem weiter?");
 									ale.showAndWait();
 									if (ale.getResult() == ButtonType.OK) {
 										UserInterface.getInstance().getIsCheck();
@@ -145,10 +148,10 @@ public class EventHandling {
 										Platform.runLater(() -> {
 											Main.getBo().BoxErstellen();
 											UserInterface.getInstance().Sichtbar(istan);
-											myProgress.close();
+											myProgress.closeMe();
 										});
 									}
-									myProgress.close();
+									myProgress.closeMe();
 								});
 							} else {
 								UserInterface.getInstance().getIsCheck();
@@ -157,23 +160,23 @@ public class EventHandling {
 									Main.getBo().BoxErstellen();
 									UserInterface.getInstance().Sichtbar(istan);
 
-									myProgress.close();
+									myProgress.closeMe();
 								});
 							}
 						} else {
 							Platform.runLater(() -> {
-								myProgress.close();
+								myProgress.closeMe();
 								Warnung("Es wurden keine XML_Dateien gefunden");
 							});
 							UserInterface.getInstance().getOkAuslesen().setDisable(true);
 						}
 //					} else {
 //						Platform.runLater(() -> {
-//					)		myProgress.close();
+//					)		myProgress.closeMe();
 //							Warnung("Eingabe Feld is Leer ");
 //						});
 //					}
-					Platform.runLater(myProgress::close);
+					Platform.runLater(myProgress::closeMe);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -215,7 +218,7 @@ public class EventHandling {
 //							Warnung("keien Datei mit csv endung gefunden ");
 //						}
 						Platform.runLater(() -> {
-							myProgress.close();
+							myProgress.closeMe();
 							opOuDa = new OpenOutputDatei(out.getText(), statistik.getText());
 							UserInterface.getInstance().getOutputFileTextField().clear();
 							UserInterface.getInstance().getStatistikTextFilde().clear();
@@ -248,7 +251,8 @@ public class EventHandling {
 						writer.append(aMylist.getDictionary().get(name)).append(";");
 					}
 					outZaehlen++;
-					Platform.runLater(() -> myProgress.progressSetzen(outZaehlen, (xmlDateienZaehlen + UserInterface.getInstance().getIsCheck().size())));
+					double progress = (double) outZaehlen / (xmlDateienZaehlen + UserInterface.getInstance().getIsCheck().size());
+					Platform.runLater(() -> myProgress.setProgress(progress));
 					writer.append("\n");
 				}
 				System.out.println(mylist.size() + " " + outZaehlen);
@@ -282,7 +286,8 @@ public class EventHandling {
 					for (int i = 0; i < UserInterface.getInstance().getIsCheck().size(); i++) {
 						if (StatistikInhalteZaehlen.getInstenceOF().getName().contains(UserInterface.getInstance().getIsCheck().get(i).getText())) {
 							MapSchreiben(StatistikInhalteZaehlen.getInstenceOF().getAuZa().get(StatistikInhalteZaehlen.getInstenceOF().getName().indexOf(UserInterface.getInstance().getIsCheck().get(i).getText())), writer, UserInterface.getInstance().getIsCheck().get(i).getText());
-							Platform.runLater(() -> myProgress.progressSetzen(outZaehlen, (xmlDateienZaehlen + UserInterface.getInstance().getIsCheck().size())));
+							double progress = (double) outZaehlen / (xmlDateienZaehlen + UserInterface.getInstance().getIsCheck().size());
+							Platform.runLater(() -> myProgress.setProgress(progress));
 							outZaehlen++;
 						}
 					}
@@ -314,7 +319,7 @@ public class EventHandling {
 	}
 
 	private static void AlProgress() {
-		myProgress = new Fortschritsanzeige();
+		myProgress = new ProgessDialog();
 
 	}
 

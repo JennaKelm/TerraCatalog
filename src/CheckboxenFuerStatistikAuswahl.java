@@ -1,6 +1,8 @@
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
@@ -29,14 +31,18 @@ public class CheckboxenFuerStatistikAuswahl {
 			alle();
 			for (int i = 0; i < Main.getAu().getName().size(); i++) {
 				arrBox.add(new CheckBox(Main.getAu().getName().get(i)));
-				box.add(arrBox.get(i), 0, i);
+				box.add(arrBox.get(i), 0, i + 1);
 			}
 		}
 	}
 
 	private void alle() {
 		Button al = new Button("Auswahl alle");
-		box.add(al, 0, Main.getAu().getName().size() + 1);
+		al.setPadding(new Insets(5d, 5d, 5d, 5d));
+		VBox vbox = new VBox(10d);
+		vbox.setPadding(new Insets(0d, 0d, 10d, 0d));
+		vbox.getChildren().add(al);
+		box.add(vbox, 0, 0);
 		al.setOnAction(event -> {
 			if (an) {
 				for (CheckBox anArrBox : arrBox) {
